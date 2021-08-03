@@ -1,0 +1,34 @@
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        server_name _;
+
+        return 301 https://$host$request_uri;
+}
+
+server {
+
+        listen 443 ssl;
+        server_name lt-2021-049.ml;
+
+        ssl_certificate /etc/letsencrypt/live/lt-2021-049.ml/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/lt-2021-049.ml/privkey.pem;
+
+        root /var/www;
+
+        location / {
+                proxy_pass http://localhost:8081;
+        }
+
+        location /web049 {
+                index index.txt;
+        }
+
+        location /secret {
+                auth_basic "wso2 login";
+                auth_basic_user_file /etc/apache2/.htpasswd;
+                index index.html;
+        }
+
+}
